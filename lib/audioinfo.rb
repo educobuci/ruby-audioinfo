@@ -39,7 +39,7 @@ class AudioInfo
   VERSION = "0.2.3"
 
   attr_reader :path, :extension, :musicbrainz_infos, :tracknum, :bitrate, :vbr
-  attr_reader :artist, :album, :title, :length, :date
+  attr_reader :artist, :album, :title, :length, :date, :genre
 
   # Part of testing API - you should not use this directly
   attr_reader :info
@@ -84,6 +84,7 @@ class AudioInfo
 	when 'mp3'
 	  @info = Mp3Info.new(filename)
 	  default_tag_fill
+	  @genre = @info.tag["genre_s"]
 	  #"TXXX"=>
 	  #["MusicBrainz TRM Id\000",
 	  #"MusicBrainz Artist Id\000aba64937-3334-4c65-90a1-4e6b9d4d7ada",
@@ -135,6 +136,7 @@ class AudioInfo
 	  @artist = @info.tags["Author"]
 	  @album = @info.tags["AlbumTitle"]
 	  @title = @info.tags["Title"]
+	  @genre = @info.tags["genre_s"]
 	  @tracknum = @info.tags["TrackNumber"].to_i
 	  @date = @info.tags["Year"]
 	  @bitrate = @info.info["bitrate"]
@@ -151,6 +153,7 @@ class AudioInfo
 	  @artist = @info.ART
 	  @album = @info.ALB
 	  @title = @info.NAM
+	  @genre = @info.GNRE
 	  @tracknum = ( t = @info.TRKN ) ? t.first : 0
 	  @date = @info.DAY
 	  @bitrate = @info.BITRATE
@@ -176,6 +179,7 @@ class AudioInfo
 	  @title = @info.tags["title"]
 	  @tracknum = @info.tags["tracknumber"].to_i
 	  @date = @info.tags["data"]
+	  @genre = @genre.tags["genre"]
 	  @length = @info.streaminfo["total_samples"] / @info.streaminfo["samplerate"].to_f
 	  @bitrate = File.size(filename).to_f*8/@length/1024
           @info.tags.each do |tagname, tagvalue|
